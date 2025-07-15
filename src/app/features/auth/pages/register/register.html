@@ -1,0 +1,54 @@
+<form class="space-y-3" [formGroup]="registerForm">
+    <div class="space-y-1">
+        <label for="username" class="block text-sm font-medium text-gray-700">Username:</label>
+        <input
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+            type="text" id="username" formControlName="username" required placeholder="Ingresa tu nombre de usuario">
+
+        @if (getControlError('username')) {
+        <div class="text-red-600 text-sm">{{ getControlError('username') }}</div>
+        }
+    </div>
+    <div class="space-y-1">
+        <label for="email" class="block text-sm font-medium text-gray-700">Email:</label>
+        <input
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+            type="email" id="email" formControlName="email" required placeholder="Ingresa tu email">
+
+        @if (getControlError('email')) {
+        <div class="text-red-600 text-sm">{{ getControlError('email') }}</div>
+        }
+    </div>
+    <div class="space-y-1">
+        <label for="password" class="block text-sm font-medium text-gray-700">Password:</label>
+        <input
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+            type="password" id="password" formControlName="password" required placeholder="Ingresa tu contraseña">
+
+        @if (getControlError('password')) {
+        <div class="text-red-600 text-sm">{{ getControlError('password') }}</div>
+        }
+    </div>
+    <div class="space-y-1">
+        <label for="confirm-password" class="block text-sm font-medium text-gray-700">Confirm Password:</label>
+        <input
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+            type="password" id="confirm-password" formControlName="confirmPassword"
+            placeholder="Confirma tu contraseña">
+        @if (getControlError('confirmPassword')) {
+        <div class="text-red-600 text-sm">{{ getControlError('confirmPassword') }}</div>
+        }
+    </div>
+
+    <div class="flex items-center justify-center">
+        <a routerLink="/auth/login" class="text-sm text-blue-600 hover:underline">
+            ¿Ya tienes una cuenta?
+        </a>
+    </div>
+
+    <button type="submit"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 disabled:opacity-50 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        [disabled]="!registerForm.valid" (click)="onSubmit()" aria-label="Crear cuenta">
+        Crear Cuenta
+    </button>
+</form>
