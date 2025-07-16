@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { LocalStorage } from '../../../../shared/services/local-storage';
 
 @Component({
   selector: 'app-login',
@@ -10,6 +11,8 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 })
 export class Login {
   private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private localStorage = inject(LocalStorage);
 
   messageErrors: { key: string, message: string }[] = [
     { key: 'required', message: 'Este campo es obligatorio.' },
@@ -25,6 +28,8 @@ export class Login {
   onSubmit() {
     if (this.loginForm.valid) {
       console.log('Form Data:', this.loginForm.value);
+      this.localStorage.setItem('token', this.localStorage.generateToken());
+      this.router.navigate(['/tracking']);
     } else {
       console.log('Form is invalid');
     }

@@ -1,0 +1,21 @@
+<app-nav />
+
+<main class="pt-16 h-screen bg-gray-300">
+
+    <div class="h-full overflow-x-auto overflow-y-hidden">
+
+        <div class="flex h-full min-w-max">
+
+            @for (item of [1, 2, 3, 4, 5, 6, 7, 8]; track $index) {
+            <div class="flex-shrink-0 p-4 h-full">
+                <div class="w-80 h-full bg-white rounded-lg shadow-md">
+                    <app-list-process />
+                </div>
+            </div>
+            }
+
+        </div>
+
+    </div>
+
+</main>
