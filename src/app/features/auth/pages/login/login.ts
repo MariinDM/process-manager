@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { LocalStorage } from '../../../../shared/services/local-storage';
+import { Auth } from '../../services/auth';
+import { NotificationPosition, Notifications } from '../../../../shared/services/notifications';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +15,8 @@ export class Login {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private localStorage = inject(LocalStorage);
+  private authService = inject(Auth);
+  private readonly notify = inject(Notifications)
 
   messageErrors: { key: string, message: string }[] = [
     { key: 'required', message: 'Este campo es obligatorio.' },
@@ -26,13 +30,24 @@ export class Login {
   });
 
   onSubmit() {
-    if (this.loginForm.valid) {
-      console.log('Form Data:', this.loginForm.value);
-      this.localStorage.setItem('token', this.localStorage.generateToken());
-      this.router.navigate(['/tracking']);
-    } else {
+
+    if (this.loginForm.invalid) {
       console.log('Form is invalid');
+      return;
     }
+
+    const loginData = this.loginForm.value;
+    this.authService.login(loginData).subscribe({
+      next: (response) => {
+        this.notify.showSuccess('Login successful', response.message, 3000, NotificationPosition.TOP_RIGHT);
+        this.localStorage.setItem('accessToken', response.token.accessToken);
+        this.router.navigate(['/tracking']);
+      },
+      error: (error) => {
+        console.error('Login failed:', error);
+        this.notify.showError('Login failed', error.error.message, 3000, NotificationPosition.TOP_RIGHT);
+      }
+    });
   }
 
   getControlError(controlName: string): string | null {

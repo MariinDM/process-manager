@@ -1,6 +1,9 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
+import { LocalStorage } from '../../../../shared/services/local-storage';
+import { Auth } from '../../services/auth';
+import { NotificationPosition, Notifications } from '../../../../shared/services/notifications';
 
 @Component({
   selector: 'app-register',
@@ -9,13 +12,17 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractContro
 })
 export class Register {
 
+  private fb = inject(FormBuilder);
+  private router = inject(Router)
+  private localStorage = inject(LocalStorage);
+  private authService = inject(Auth);
+  private readonly notify = inject(Notifications);
+
   messageErrors: { key: string, message: string }[] = [
     { key: 'required', message: 'Este campo es obligatorio.' },
     { key: 'email', message: 'Ingresa un email válido.' },
     { key: 'passwordMismatch', message: 'Las contraseñas no coinciden.' }
   ];
-
-  private fb = inject(FormBuilder);
 
   registerForm: FormGroup = this.fb.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
@@ -25,11 +32,23 @@ export class Register {
   }, { validators: this.passwordMatchValidator });
 
   onSubmit() {
-    if (this.registerForm.valid) {
-      console.log('Form Data:', this.registerForm.value);
-    } else {
-      console.log('Form is invalid');
+    if (this.registerForm.invalid) {
+      this.notify.showWarning('¡Precaución!', 'Por favor, completa todos los campos correctamente.', 3000, NotificationPosition.TOP_RIGHT);
+      return;
     }
+
+    const registerData = this.registerForm.value;
+
+    this.authService.register(registerData).subscribe({
+      next: (response) => {
+        this.notify.showSuccess('¡Registro exitoso!', response.message, 3000, NotificationPosition.TOP_RIGHT);
+        this.localStorage.setItem('accessToken', response.token.accessToken);
+        this.router.navigate(['/tracking']);
+      },
+      error: (error) => {
+        this.notify.showError('¡Error!', error.error.message, 3000, NotificationPosition.TOP_RIGHT);
+      }
+    });
   }
 
   getControlError(controlName: string): string | null {
