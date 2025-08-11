@@ -28,7 +28,7 @@ export class Websocket {
 
   onTaskDeletion(): Observable<number> {
     return new Observable(observer => {
-      this.socket.on('taskDeletion', data => observer.next(data));
+      this.socket.on('taskDelete', data => observer.next(data));
     });
   }
 

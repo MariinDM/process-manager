@@ -3,25 +3,31 @@
 </div>
 
 
-@if (tasks[status].length === 0) {
-<div class="m-2 mt-4 border-2 border-dashed border-gray-300 bg-gray-100 rounded-lg">
+<div class="grid gap-4 mt-2" cdkDropList [id]="status + '-tasks'" [cdkDropListData]="tasks[status]"
+    [cdkDropListConnectedTo]="connectedDropLists" (cdkDropListDropped)="drop($event)">
 
-    <div class="row text-center m-2 flex justify-center">
-        <span>📝</span>
-        <span>No hay tareas disponibles</span>
+    @if (tasks[status].length === 0) {
+    <div class="mx-2 border-2 border-dashed border-gray-300 bg-gray-100 rounded-lg">
+
+        <div class="row text-center p-2 flex justify-center">
+            <span>📝</span>
+            <span>No hay tareas disponibles</span>
+        </div>
+        <div class="row px-5 text-center">
+            <p>Las tareas aparecerán aquí automáticamente cuando se creen</p>
+        </div>
+
     </div>
-    <div class="row px-5 text-center">
-        <p>Las tareas aparecerán aquí automáticamente cuando se creen</p>
-    </div>
+    }
 
-</div>
-}
+    @if (tasks[status].length > 0) {
 
-@if (tasks[status].length > 0) {
-<div class="grid gap-4 mt-2">
-    @for (task of tasks[status]; track task.id) {
-    <div
-        class="border-2 border-gray-300 rounded-lg m-2 p-3 bg-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 hover:bg-gray-200 ">
+    @for (task of tasks[status]; track $index) {
+    <div cdkDrag
+        class="task-item border-2 border-gray-300 rounded-lg mx-2 p-3 bg-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 hover:bg-gray-200 cursor-pointer"
+        [ngClass]="{ 'mb-2': $index === tasks[status].length -1 }" [style.outline]="'none'"
+        [style.background-color]="'rgb(243 244 246)'" [style.border]="'2px solid rgb(209 213 219)'"
+        [style.border-radius]="'0.5rem'" [style.padding]="'0.75rem'">
         <div class="flex justify-between items-center mb-2">
             <h3 class="font-bold">{{ task.title }}</h3>
             <span class="task-status" [class]="'status-' + (task.status || 'pending')">
@@ -41,5 +47,5 @@
         </div>
     </div>
     }
+    }
 </div>
-}

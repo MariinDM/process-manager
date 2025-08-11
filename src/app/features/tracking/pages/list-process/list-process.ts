@@ -2,11 +2,16 @@ import { Component, inject, OnDestroy, OnInit, ViewChild, ChangeDetectorRef, inp
 import { CommonModule } from '@angular/common';
 import { Websocket } from '../../../../shared/services/websocket';
 import { TaskService } from '../../services/task-service';
-import { AllColumns, TaskStatus } from '../../task-interfaces';
+import { AllColumns, Task, TaskStatus } from '../../task-interfaces';
+import { CdkDropList, CdkDrag, transferArrayItem, moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-list-process',
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    CdkDropList,
+    CdkDrag
+  ],
   templateUrl: './list-process.html',
   styleUrl: './list-process.scss'
 })
@@ -17,6 +22,7 @@ export class ListProcess implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
 
   @Input() status: TaskStatus = 'pending';
+  @Input() connectedDropLists: string[] = [];
 
   tasks: AllColumns = {
     pending: [],
@@ -28,40 +34,19 @@ export class ListProcess implements OnInit, OnDestroy {
   ngOnInit() {
     this.websocketService.connect();
 
-    // 🔄 Listener para actualizaciones de tareas (crear/actualizar)
-
-    this.websocketService.onTaskUpdate().subscribe(task => {
-      const tmpStatus = task.status as TaskStatus;
-      this.tasks[tmpStatus].push(task);
-      this.tasks[tmpStatus].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      this.cdr.detectChanges();
+    this.websocketService.onTaskCreate().subscribe(task => {
+      this.updateTaskStatus(task, task.status as TaskStatus);
     });
 
-    // this.websocketService.onTaskUpdate().subscribe(task => {
-
-    //   const existingIndex = this.tasks.findIndex(t => t.id === task.id);
-
-    //   if (existingIndex !== -1) {
-    //     this.tasks[existingIndex] = task;
-    //   } else {
-    //     this.tasks.push(task);
-    //   }
-
-    //   this.cdr.detectChanges();
-    // });
+    this.websocketService.onTaskUpdate().subscribe(task => {
+      this.updateTaskStatus(task, task.status as TaskStatus);
+    });
 
     // 🗑️ Listener para eliminación de tareas
 
     // this.websocketService.onTaskDeletion().subscribe(task => {
     //   const tmpStatus = task.status as TaskStatus;
     //   this.tasks[tmpStatus] = this.tasks[tmpStatus].filter(t => t.id !== task.id);
-    //   this.cdr.detectChanges();
-    // });
-
-    // this.websocketService.onTaskDeletion().subscribe(taskId => {
-
-    //   this.tasks = this.tasks.filter(task => task.id !== taskId);
-
     //   this.cdr.detectChanges();
     // });
 
@@ -117,4 +102,28 @@ export class ListProcess implements OnInit, OnDestroy {
     }
   }
 
+  drop(event: CdkDragDrop<Task[]>) {
+    const previousContainer = event.previousContainer;
+    const currentContainer = event.container;
+
+    if (previousContainer === currentContainer) {
+      moveItemInArray(currentContainer.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(previousContainer.data, currentContainer.data, event.previousIndex, event.currentIndex);
+    }
+  }
+
+  updateTaskStatus(task: Task, newStatus: TaskStatus) {
+    const tmpStatus = task.status as TaskStatus;
+    const existingIndex = this.tasks[tmpStatus].findIndex(t => t.id === task.id);
+
+    console.log({ existingIndex });
+
+    if (existingIndex !== -1) {
+      this.tasks[tmpStatus][existingIndex] = task;
+    } else {
+      this.tasks[tmpStatus].push(task);
+    }
+    this.cdr.detectChanges();
+  }
 }

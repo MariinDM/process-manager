@@ -1,0 +1,47 @@
+// Estilos específicos para Angular CDK Drag
+.task-item {
+    background-color: rgb(243 244 246) !important;
+    border: 2px solid rgb(209 213 219) !important;
+    border-radius: 0.5rem !important;
+    padding: 0.75rem !important;
+    outline: none !important;
+
+    &:hover {
+        background-color: rgb(229 231 235) !important;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+    }
+
+    &:focus {
+        outline: none !important;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+    }
+
+    &:active {
+        outline: none !important;
+        transform: none !important;
+    }
+}
+
+// CDK específicos
+.cdk-drag {
+    &:focus {
+        outline: none !important;
+    }
+
+    &.cdk-drag-animating {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1) !important;
+    }
+
+    &.cdk-drag-preview {
+        background-color: rgb(243 244 246) !important;
+        border: 2px solid rgb(209 213 219) !important;
+        border-radius: 0.5rem !important;
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1) !important;
+    }
+
+    &.cdk-drag-placeholder {
+        opacity: 0.5 !important;
+        background-color: rgb(229 231 235) !important;
+        border: 2px dashed rgb(156 163 175) !important;
+    }
+}

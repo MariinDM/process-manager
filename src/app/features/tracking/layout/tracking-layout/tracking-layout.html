@@ -9,7 +9,7 @@
             @for (item of columns; track $index) {
             <div class="flex-shrink-0 p-4 h-full">
                 <div class="w-80 h-full bg-white rounded-lg shadow-md overflow-y-auto">
-                    <app-list-process [status]="item.name" />
+                    <app-list-process [status]="item.name" [connectedDropLists]="allDropListIds" />
                 </div>
             </div>
             }

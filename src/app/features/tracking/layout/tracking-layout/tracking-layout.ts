@@ -17,4 +17,6 @@ export class TrackingLayout {
     { id: 3, name: 'completed' },
     { id: 4, name: 'cancelled' },
   ];
+
+  allDropListIds = ['pending-tasks', 'in_progress-tasks', 'completed-tasks', 'cancelled-tasks'];
 }
