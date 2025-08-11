@@ -1,0 +1,45 @@
+<div class="sticky top-0 bg-white z-10 border-b border-gray-200 shadow-sm py-3 text-center">
+    <span class="text-lg font-bold">{{ getStatusLabel(status) }}</span>
+</div>
+
+
+@if (tasks[status].length === 0) {
+<div class="m-2 mt-4 border-2 border-dashed border-gray-300 bg-gray-100 rounded-lg">
+
+    <div class="row text-center m-2 flex justify-center">
+        <span>📝</span>
+        <span>No hay tareas disponibles</span>
+    </div>
+    <div class="row px-5 text-center">
+        <p>Las tareas aparecerán aquí automáticamente cuando se creen</p>
+    </div>
+
+</div>
+}
+
+@if (tasks[status].length > 0) {
+<div class="grid gap-4 mt-2">
+    @for (task of tasks[status]; track task.id) {
+    <div
+        class="border-2 border-gray-300 rounded-lg m-2 p-3 bg-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 hover:bg-gray-200 ">
+        <div class="flex justify-between items-center mb-2">
+            <h3 class="font-bold">{{ task.title }}</h3>
+            <span class="task-status" [class]="'status-' + (task.status || 'pending')">
+                {{ getStatusLabel(task.status) }}
+            </span>
+        </div>
+
+        @if (task.description) {
+        <p class="text-justify">{{ task.description }}</p>
+        }
+
+        <div class="row flex justify-between items-center mt-2">
+            <small class="font-mono px-1.5 py-0.5 text-sm">ID: {{ task.id }}</small>
+            @if (task.createdAt) {
+            <small class="italic">{{ formatDate(task.createdAt) }}</small>
+            }
+        </div>
+    </div>
+    }
+</div>
+}
