@@ -20,4 +20,12 @@ export class Auth {
     return this.http.post(`${this.apiUrl}/auth/register`, body);
   }
 
+  refreshToken(value: string) {
+    return this.http.post(`${this.apiUrl}/auth/refresh`, value, {});
+  }
+
+  logout() {
+
+  }
+
 }

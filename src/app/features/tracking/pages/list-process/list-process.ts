@@ -42,13 +42,11 @@ export class ListProcess implements OnInit, OnDestroy {
       this.updateTaskStatus(task, task.status as TaskStatus);
     });
 
-    // 🗑️ Listener para eliminación de tareas
-
-    // this.websocketService.onTaskDeletion().subscribe(task => {
-    //   const tmpStatus = task.status as TaskStatus;
-    //   this.tasks[tmpStatus] = this.tasks[tmpStatus].filter(t => t.id !== task.id);
-    //   this.cdr.detectChanges();
-    // });
+    this.websocketService.onTaskDeletion().subscribe(task => {
+      const tmpStatus = task.status as TaskStatus;
+      this.tasks[tmpStatus] = this.tasks[tmpStatus].filter(t => t.id !== task.id);
+      this.cdr.detectChanges();
+    });
 
     this.getTaskByStatus(this.status);
   }
@@ -116,8 +114,6 @@ export class ListProcess implements OnInit, OnDestroy {
   updateTaskStatus(task: Task, newStatus: TaskStatus) {
     const tmpStatus = task.status as TaskStatus;
     const existingIndex = this.tasks[tmpStatus].findIndex(t => t.id === task.id);
-
-    console.log({ existingIndex });
 
     if (existingIndex !== -1) {
       this.tasks[tmpStatus][existingIndex] = task;

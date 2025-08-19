@@ -1,9 +1,14 @@
-import { Injectable } from '@angular/core';
+import { HttpHandler, HttpRequest } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { CookieService } from 'ngx-cookie-service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocalStorage {
+
+  cookie = inject(CookieService)
 
   getItemJson<T>(key: string): T | null {
     const item = localStorage.getItem(key);
@@ -34,4 +39,20 @@ export class LocalStorage {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   }
 
+  setCookieItem(key: string, item: string): void {
+    this.cookie.set(key, item, {
+      expires: 1,
+      secure: true,
+      sameSite: 'Strict',
+      path: '/'
+    });
+  }
+
+  getCookieItem(key: string): string | null {
+    return this.cookie.get(key);
+  }
+
+  removeCookieItem(key: string): void {
+    this.cookie.delete(key, '/');
+  }
 }
